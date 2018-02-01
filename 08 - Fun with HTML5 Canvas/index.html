@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+  <style>
+    body{
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  Go on Picasso!
+  <canvas id="draw" width="800" height="800"></canvas>
+  <script>
+    const canvas = document.querySelector('#draw');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const ctx = canvas.getContext('2d');
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+
+    let isDrawing = false;
+    let increaseWidth = true;
+    let mouseX = null;
+    let mouseY = null;
+    let lineWidth = 1;
+    let hue =0;
+
+    function update() {
+      lineWidth = increaseWidth ? ++lineWidth : --lineWidth;
+      hue = hue < 360 ? ++hue : 0;
+      increaseWidth = (lineWidth > 100 || lineWidth < 1) ? !increaseWidth : increaseWidth;
+      ctx.lineWidth =  lineWidth;
+      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+    }
+
+    function draw(e){
+      if (!isDrawing) return;
+
+      ctx.beginPath();
+      ctx.moveTo(mouseX,mouseY);
+      ctx.lineTo(e.offsetX,e.offsetY);
+      ctx.stroke()
+
+      mouseX = e.offsetX;
+      mouseY = e.offsetY;
+
+      update();
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+      isDrawing = true
+      mouseX = e.offsetX;
+      mouseY = e.offsetY;
+    });
+    canvas.addEventListener('mousemove',draw)
+    canvas.addEventListener('mouseup',() => isDrawing = false);
+    canvas.addEventListener('mouseout',() => isDrawing = false);
+  </script>
+
+  <style>
+  html, body {
+    margin:0;
+  }
+</style>
+
+</body>
+</html>
